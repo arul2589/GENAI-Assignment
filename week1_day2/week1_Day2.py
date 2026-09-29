@@ -11,16 +11,16 @@ while True:
              grade = "A"
             
         elif mark >=80:
-            grade = "A"
+            grade = "B"
 
         elif mark >=70:
-            grade = "A"
+            grade = "C"
 
         elif mark >=60:
-            grade = "A"
+            grade = "D"
 
         else:
-            grade = "A"
+            grade = "E"
 
         print (f"Mark: {mark} -> Grade: {grade}")
 
