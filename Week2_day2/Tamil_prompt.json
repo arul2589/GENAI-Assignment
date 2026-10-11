@@ -1,0 +1,78 @@
+{
+  "Duration": "10 seconds",
+  "Subject": "A Chola-era army assembling at dawn in Tamilakam around 1026 CE, including foot soldiers, archers, commanders, and war elephants.",
+  "Composition": "Wide establishing shot of the army gathered on an open training ground. Soldiers fill the foreground; elephants and tiger-emblem banners are visible in the distance.",
+  "Action": "Soldiers take their places in formation while commanders inspect the ranks and attendants prepare the elephants.",
+  "Location": "A Chola settlement and training ground in Tamilakam, South India, around 1026 CE.",
+  "Aesthetic": "Cinematic historical realism, soft golden dawn light, earthy colors, historically inspired South Indian clothing and equipment. No modern objects or fantasy armor.",
+  "Script": {
+    "NarrationTamil": "ஆயிரம் ஆண்டுகளுக்கு முன், சோழ நாட்டில் வலிமையான படைகள் உருவாயின.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Use the same commander, soldiers, clothing, weapons, and tiger-emblem banners in all six clips."
+},
+{
+  "Duration": "10 seconds",
+  "Subject": "Chola foot soldiers carrying spears, swords, and round shields.",
+  "Composition": "A medium tracking shot moves along the front rank, showing the soldiers' focused expressions, shields, and weapons.",
+  "Action": "The soldiers march in step as their commander signals them forward.",
+  "Location": "A dirt road leading from the army's training ground into the Tamil countryside, around 1026 CE.",
+  "Aesthetic": "Grounded historical drama, natural morning light, realistic movement, and period-inspired South Indian clothing. No graphic violence.",
+  "Script": {
+    "NarrationTamil": "காலாட்படையினர் ஒழுங்காக அணிவகுத்து, நாட்டைக் காக்கப் பயிற்சி பெற்றனர்.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Continue with the same Chola commander, soldiers, clothing, weapons, and tiger-emblem banners from Video 1."
+},
+{
+  "Duration": "10 seconds",
+  "Subject": "Chola archers practicing with traditional bows and arrows.",
+  "Composition": "Show an archer aiming over the shoulder, then cut to a side view of several archers releasing arrows toward distant straw targets.",
+  "Action": "The archers draw and release their bows together in a disciplined training exercise.",
+  "Location": "An open practice field bordered by palm trees and low hills in Tamilakam, around 1026 CE.",
+  "Aesthetic": "Cinematic historical realism, clear daylight, period-inspired bows and clothing, controlled training scene with no injuries.",
+  "Script": {
+    "NarrationTamil": "வில்லாளர்கள் தங்கள் திறமையையும் குறி தவறாத பயிற்சியையும் வளர்த்தனர்.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Keep the same visual style, Chola-era clothing, and army identity as in the previous clips."
+},
+{
+  "Duration": "10 seconds",
+  "Subject": "A Chola war elephant guided by a mahout, accompanied by soldiers.",
+  "Composition": "Begin with a low-angle view showing the elephant's scale, then show the mahout guiding it and soldiers walking alongside.",
+  "Action": "The elephant walks steadily along a training route while the soldiers maintain formation beside it.",
+  "Location": "A prepared route beside the Chola army's field camp in Tamilakam, around 1026 CE.",
+  "Aesthetic": "Respectful, realistic depiction of an elephant under human care, historically inspired equipment, warm daylight, and no battle gore or fantasy decorations.",
+  "Script": {
+    "NarrationTamil": "போர்யானைகளும் படையின் அணிவகுப்பில் முக்கிய இடம் பெற்றன.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Use the same army, commander, clothing, banners, and cinematic style as in the previous clips."
+},
+{
+  "Duration": "10 seconds",
+  "Subject": "Chola commanders and officers planning the army's route at a field camp.",
+  "Composition": "Show a close view of hands pointing to a simple route map, then widen to reveal the commander, officers, supplies, and soldiers listening.",
+  "Action": "The commander explains the plan; officers listen and prepare to move.",
+  "Location": "A Chola field camp in Tamilakam, around 1026 CE, with tents, supply carts, and palm-leaf materials.",
+  "Aesthetic": "Historically inspired cinematic realism, practical camp details, restrained earthy colors, and a calm, focused mood. No modern maps, printed text, or objects.",
+  "Script": {
+    "NarrationTamil": "திட்டமிடலும் தலைமையும் படையின் வெற்றிக்கு வழிகாட்டின.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Keep the same commander and army from the earlier clips, with matching clothing, banners, and visual style."
+},
+{
+  "Duration": "10 seconds",
+  "Subject": "The Chola army marching together beneath tiger-emblem banners, with foot soldiers, archers, commanders, and elephants.",
+  "Composition": "A wide cinematic shot follows the army from behind as the countryside opens ahead and the banners rise above the marching ranks.",
+  "Action": "The army advances in an orderly procession into the morning light.",
+  "Location": "A broad road through the Tamilakam countryside, with fields, palm trees, and distant hills, around 1026 CE.",
+  "Aesthetic": "Uplifting historical film ending, golden morning light, realistic scale and movement, dignified tone. No modern objects, fantasy effects, or graphic violence.",
+  "Script": {
+    "NarrationTamil": "ஒற்றுமை, துணிவு, ஒழுக்கம்—சோழப் படையின் அடையாளங்கள்.",
+    "Delivery": "Clear, dignified Tamil narration, paced to fit the clip."
+  },
+  "Continuity": "Conclude with the same commander, soldiers, elephants, clothing, banners, and cinematic style used throughout the video."
+}
