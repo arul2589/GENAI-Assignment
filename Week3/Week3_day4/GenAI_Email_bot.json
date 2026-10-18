@@ -1,0 +1,282 @@
+{
+  "name": "GenAI_Email_bot",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a customized email based on the user's Telegram message:\n\n{{ $json.message.text }}\n\nRead the message carefully and extract the recipient's name and email address if provided. Do not ask for information that is already present.\n\nIf the recipient's name or email address is missing, set status to \"needs_information\" and politely ask only for the missing recipient detail.\n\nIf the recipient's name and email address are present but the purpose or main message of the email is missing, set status to \"needs_information\" and politely ask what the email should be about.\n\nIf the recipient details and email purpose are present, draft a clear, professional email. Do not invent facts or details. End the email body with this exact signature, on separate lines:\n\nBest regards,\nS Arul Murugan\n\nReturn valid JSON only, with no Markdown, code fences, or text outside the JSON. Use this exact structure:\n\n{\n  \"status\": \"ready\" or \"needs_information\",\n  \"recipient_name\": \"Recipient name, or empty string if missing\",\n  \"recipient_email\": \"Recipient email, or empty string if missing\",\n  \"subject\": \"Email subject, or empty string if more information is needed\",\n  \"body\": \"Email body, or a polite request for the missing information\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -592,
+        -16
+      ],
+      "id": "b30f3b6e-2113-4bf9-a4e9-6adefbbe2f8c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -672,
+        240
+      ],
+      "id": "4e01f771-be2a-4ee7-b449-90ec1c4cc7d3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7PcdSOn6NauEeDY2",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map((item) => {\n  // The Basic LLM Chain usually returns its answer in \"text\".\n  const raw =\n    item.json.text ??\n    item.json.output ??\n    item.json.response ??\n    item.json;\n\n  let parsed;\n\n  if (typeof raw === \"string\") {\n    // Remove optional Markdown JSON code fences.\n    let cleaned = raw\n      .trim()\n      .replace(/^```(?:json)?\\s*/i, \"\")\n      .replace(/\\s*```$/, \"\")\n      .trim();\n\n    try {\n      parsed = JSON.parse(cleaned);\n    } catch {\n      // Try to extract a JSON object if the model added text around it.\n      const firstBrace = cleaned.indexOf(\"{\");\n      const lastBrace = cleaned.lastIndexOf(\"}\");\n\n      if (firstBrace !== -1 && lastBrace > firstBrace) {\n        try {\n          parsed = JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));\n        } catch {\n          parsed = {\n            status: \"needs_information\",\n            body: cleaned,\n          };\n        }\n      } else {\n        parsed = {\n          status: \"needs_information\",\n          body: cleaned,\n        };\n      }\n    }\n  } else if (raw && typeof raw === \"object\") {\n    parsed = raw;\n  } else {\n    parsed = {\n      status: \"needs_information\",\n      body: String(raw ?? \"\"),\n    };\n  }\n\n  return {\n    json: {\n      status: parsed.status === \"ready\" ? \"ready\" : \"needs_information\",\n      recipient_name: parsed.recipient_name ?? \"\",\n      recipient_email: parsed.recipient_email ?? \"\",\n      subject: parsed.subject ?? \"\",\n      body: parsed.body ?? parsed.response ?? parsed.message ?? \"\",\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "37b33116-9586-44f0-9cfd-06c02d9dfb4b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71c6eaf3-e2e9-452f-ad62-55b2e114a011",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ready",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        -16
+      ],
+      "id": "a0b30ca0-9723-43d7-b360-8d7d7e7ef4a8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -800,
+        -16
+      ],
+      "id": "63890e96-c420-43b9-bc78-957eff9ba8ea",
+      "name": "genai_email_bot",
+      "webhookId": "5774a0df-2a51-4c6e-902f-95c01b4443ad",
+      "credentials": {
+        "telegramApi": {
+          "id": "8cyzPDRY3QdRgFso",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('genai_email_bot').first().json.message.chat.id }}",
+        "text": "={{ 'Email sent to ' + $('Code in JavaScript').item.json.recipient_email }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        -80
+      ],
+      "id": "f262584b-2e28-438a-a4d0-a5068129fa0d",
+      "name": "If email sent",
+      "webhookId": "4035c63c-852c-4abf-8db6-30b7dd44cee1",
+      "credentials": {
+        "telegramApi": {
+          "id": "8cyzPDRY3QdRgFso",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('genai_email_bot').first().json.message.chat.id }}",
+        "text": "Could you please provide the recipient's name and email address so I can prepare the email for you?",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        144
+      ],
+      "id": "9d8a1b6b-8a8a-4f45-90f0-29521e622fa3",
+      "name": "If email not sent",
+      "webhookId": "eb87fcf6-ecb4-4b08-8346-a099a28b6886",
+      "credentials": {
+        "telegramApi": {
+          "id": "8cyzPDRY3QdRgFso",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Code in JavaScript').item.json.recipient_email }}",
+        "subject": "={{ $('Code in JavaScript').item.json.subject }}",
+        "emailType": "text",
+        "message": "={{ $('Code in JavaScript').item.json.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        -240
+      ],
+      "id": "864abab4-431c-4769-97a2-ce7727783cce",
+      "name": "Send a message",
+      "webhookId": "48adda61-9f29-46f0-930d-8ae091f539d1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D3jY2Kg6PC7XfClG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If email sent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If email not sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "genai_email_bot": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If email sent": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b0fad143-b18e-4bb1-866c-e77d3b9396f9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b97724d143ab5da1395e773e5285617e06e1b7b4f310d1dd331fdcc03aa4abe"
+  },
+  "nodeGroups": [],
+  "id": "gECV6JdAV4C9URgi",
+  "tags": []
+}
