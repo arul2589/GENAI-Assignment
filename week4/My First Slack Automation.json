@@ -1,0 +1,79 @@
+{
+  "name": "My First Slack Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CAACF9K8W",
+          "mode": "id"
+        },
+        "text": "Hello from n8n! 🚀 My first Slack automation is working!",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "6f6b1767-e946-4086-8aff-c6b2f33cf887",
+      "name": "Send a message",
+      "webhookId": "2fe84a3d-3c9e-42c3-a0ec-eb1ba46c8291",
+      "credentials": {
+        "slackApi": {
+          "id": "2X7FAHLodNMyRkka",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -128,
+        112
+      ],
+      "id": "ae692f1d-7c35-466a-a11a-00fc53f7dd9f",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "045c979e-d124-47a1-8b02-70f69b4b2e93",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b97724d143ab5da1395e773e5285617e06e1b7b4f310d1dd331fdcc03aa4abe"
+  },
+  "nodeGroups": [],
+  "id": "MGe8nj0ItZClOAMM",
+  "tags": []
+}

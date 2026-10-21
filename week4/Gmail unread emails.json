@@ -1,0 +1,196 @@
+{
+  "name": "Gmail unread emails",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -32
+      ],
+      "id": "9c6ea404-f3ae-4a40-8d0c-0892818d9a1f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Summarise the following unread Gmail messages.\n\nReturn exactly one line per email, maximum 20 words each.\nInclude sender, subject, and the main information.\nNo greetings, headings, numbering, or extra text.\n\nEmails:\n{{ JSON.stringify($json.emails) }}",
+        "options": {
+          "systemMessage": "You are an AI Email Summarisation Agent.\n\nSummarise up to 5 unread Gmail messages.\n\nSTRICT OUTPUT RULES:\n1. Return exactly one line per retrieved email.\n2. Each entire line must contain no more than 20 words, including sender, subject, and summary.\n3. Use this format:\nSender: [Name] | Subject: [Short Subject] | Summary: [Brief Summary]\n4. Shorten long subjects when necessary to satisfy the 20-word limit.\n5. Do not include blank lines between summaries.\n6. Do not include headings, greetings, numbering, or explanations.\n7. Never invent information.\n8. Return only the combined summaries as plain text.\n\nIf no unread emails are found, return exactly:\nNo unread emails found\n\nEach complete summary line, including sender and subject, must contain no more than 20 words. Shorten the subject if necessary. Do not add blank lines."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "bf61940c-65a0-44dd-b1e3-b5dc97607711",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        176
+      ],
+      "id": "f7aac52e-32ca-4627-9b8b-46e50d42d940",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7PcdSOn6NauEeDY2",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ 'manual-test-session' }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -352,
+        176
+      ],
+      "id": "8bcef12f-4321-4046-a850-4b29c896f5d7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "simple": false,
+        "filters": {
+          "q": "is:unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        176
+      ],
+      "id": "d3770e2d-176e-42e0-8f9a-2ec4a8b898d1",
+      "name": "Get many messages in Gmail",
+      "webhookId": "7241a6f1-c93e-45ca-93f0-9c5c6ec5716d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D3jY2Kg6PC7XfClG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "arul.elec@gmail.com",
+        "subject": "Unread Email Summary",
+        "emailType": "text",
+        "message": "={{ $json.output.replace(/\\\\n/g, '\\n') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "bc09f00a-8e01-4422-bd82-25bc84191c39",
+      "name": "Send a message",
+      "webhookId": "38ebf642-c670-470f-91af-0d9d27825744",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D3jY2Kg6PC7XfClG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2da0e842-4f72-4bad-a6f6-65a9e8e837d7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b97724d143ab5da1395e773e5285617e06e1b7b4f310d1dd331fdcc03aa4abe"
+  },
+  "nodeGroups": [],
+  "id": "1JFXHSGHnm9pLbUi",
+  "tags": []
+}

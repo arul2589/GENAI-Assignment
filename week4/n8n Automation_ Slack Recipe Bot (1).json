@@ -1,0 +1,259 @@
+{
+  "name": "n8n Automation: Slack Recipe Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": [
+          "message"
+        ],
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "C0CAACF9K8W"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -80
+      ],
+      "id": "48471066-faaf-4b7a-b5de-daec0a0bace0",
+      "name": "Slack Trigger",
+      "webhookId": "a3137157-28e7-4e47-994d-dc91e23f9e64",
+      "credentials": {
+        "slackApi": {
+          "id": "2X7FAHLodNMyRkka",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\nYou are an Indian recipe ingredient assistant.\n\nThe user sends a dish name from Slack.\nDish name: {{ $json.recipe }}\n\nYour task:\n1. Determine whether the user provided a valid, recognizable dish name.\n2. Accept minor spelling mistakes if the intended dish is clear.\n3. If the dish is valid, list its main ingredients.\n4. If the dish is missing, meaningless, or cannot be confidently identified, set status to false.\n\nRules:\n- Always return a valid JSON object.\n- Do not include Markdown code fences or text outside the JSON.\n- The status field must be a boolean (true or false), not a string.\n- For a valid dish, set status to true.\n- Start the message with: To make [Dish Name] you'll need:\n- Provide exactly 4 short bullet points using hyphens (-).\n- Group related ingredients together.\n- Include only essential ingredients.\n- Do not include quantities, cooking steps, explanations, or greetings.\n- For an invalid dish, set status to false and use the message: Please provide a valid recipe name.\n- For an invalid dish, set recipe_name to an empty string.\n\nReturn exactly this JSON structure:\n{\n  \"status\": true,\n  \"recipe_name\": \"Paneer Butter Masala\",\n  \"message\": \"To make Paneer Butter Masala you'll need:\\n- Paneer\\n- Butter\\n- Tomatoes, onions, cashews\\n- Cream, ginger-garlic paste, spices\"\n}\n\nInvalid example:\n{\n  \"status\": false,\n  \"recipe_name\": \"\",\n  \"message\": \"Please provide a valid recipe name.\"\n}\n  ",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -16,
+        -96
+      ],
+      "id": "b6543701-d2a4-4d3b-aedd-5cf88900371b",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        176
+      ],
+      "id": "4b99423e-62ae-4ede-9a3f-5791411af3e8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7PcdSOn6NauEeDY2",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn $input.all().map(item => {\n  try {\n    // Get the AI response from the text field.\n    const raw = String(item.json.text ?? \"\").trim();\n\n    // Remove Markdown code fences if present.\n    const cleaned = raw.replace(/^```(?:json)?\\s*/i, \"\").replace(/\\s*```$/, \"\");\n\n    // Parse the AI-generated JSON string.\n    const recipe = JSON.parse(cleaned);\n\n    // Check the status returned by the AI.\n    const status = recipe.status === true;\n\n    // Extract only the recipe message.\n    const message = status && typeof recipe.message === \"string\"\n      ? recipe.message.trim()\n      : \"Please provide a valid recipe name.\";\n\n    // Return clean data for Slack.\n    return {\n      json: {\n        status,\n        recipe_name: status ? String(recipe.recipe_name ?? \"\") : \"\",\n        message,\n        channel: $(\"Slack Trigger\").first().json.channel\n      }\n    };\n  } catch (error) {\n    // Return a safe message if the AI response isn't valid JSON.\n    return {\n      json: {\n        status: false,\n        recipe_name: \"\",\n        message: \"Sorry, I couldn't process your recipe. Please try again.\",\n        channel: $(\"Slack Trigger\").first().json.channel\n      }\n    };\n  }\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -96
+      ],
+      "id": "0d272967-90fe-4832-9fbf-103c36c75597",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CAACF9K8W",
+          "mode": "id"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        528,
+        -96
+      ],
+      "id": "ab57cdc9-a4c6-46ca-9406-57f32b2e7da3",
+      "name": "Send a message",
+      "webhookId": "fc89c5e7-1b63-4520-a49e-75174ea5e950",
+      "credentials": {
+        "slackApi": {
+          "id": "2X7FAHLodNMyRkka",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01e34610-ca71-4d75-a7be-44ccf36507da",
+              "leftValue": "={{ !$json.bot_id && !$json.subtype }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        -80
+      ],
+      "id": "f488c324-bf6f-400c-b789-36b2239e37b0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89da639f-5a96-4156-8f0e-bdbfde4f34ae",
+              "name": "recipe",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -224,
+        -96
+      ],
+      "id": "78928e5e-cbfe-443a-b2c1-5256a0174376",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "6dd4c90f-5863-4a9d-a7d0-2d874e6fc019",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b97724d143ab5da1395e773e5285617e06e1b7b4f310d1dd331fdcc03aa4abe"
+  },
+  "nodeGroups": [],
+  "id": "DiL521dJD4ajM1dF",
+  "tags": []
+}
