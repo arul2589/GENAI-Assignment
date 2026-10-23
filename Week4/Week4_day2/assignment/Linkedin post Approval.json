@@ -1,0 +1,449 @@
+{
+  "name": "Linkedin post Approval",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "LinkedIn post Generator",
+        "formDescription": "Enter a topic to generate a LinkedIn post",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic*",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "File",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "66c3b82b-d6b0-43e7-aae5-daff8c95dae4",
+      "name": "On form submission",
+      "webhookId": "6fba54b8-115d-4158-871c-3c3cd8f0eecb"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        272
+      ],
+      "id": "cf13b0a5-dfbe-4806-939e-403170ba218e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "7PcdSOn6NauEeDY2",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $execution.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        272
+      ],
+      "id": "a280e9f6-36e6-431c-8b1b-ea0e6c32a47e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional LinkedIn content writer.\n\nTopic: {{ $json[\"Topic*\"] }}\n\nInstructions:\n1. Use the connected Google Search in SerpAPI tool to research the submitted topic before writing the LinkedIn post.\n2. Gather relevant and reliable information.\n3. Verify important factual claims using the search results.\n4. Write an engaging LinkedIn post of 120–150 words.\n5. Start with a strong hook.\n6. Use clear, professional language.\n7. Include one call to action.\n8. Use a maximum of 3 hashtags.\n9. Do not invent statistics or facts.\n10. Return only the final LinkedIn post.\n\nDo not publish or save the post.\n\nFormatting and Content Rules:\n1. Do not use emojis or decorative symbols.\n2. Do not use icons such as rockets, fire, stars, checkmarks, or arrows.\n3. Do not use Markdown formatting such as **, ##, or bullet symbols.\n4. Do not include unnecessary introductions or explanations.\n5. Avoid generic AI-generated phrases and exaggerated claims.\n6. Use natural, professional, human-like language.\n7. Use short, readable paragraphs.\n8. Avoid repeating the same information.\n9. Do not include unsupported statistics or facts.\n10. Keep the post between 120 and 150 words.\n11. Include one clear call to action.\n12. Use a maximum of 3 relevant hashtags.\n13. Return only the LinkedIn post, without additional comments.\n\nYou are a professional LinkedIn Content Writer specializing in AI, automation, DevOps, cloud computing, and technology.\n\nTopic:\n{{ $json['Topic*'] }}\n\nYour task is to create a professional LinkedIn post based on the given topic.\n\nRequirements:\n\n1. Generate a short, engaging, professional heading relevant to the topic.\n2. Keep the heading between 5 and 10 words.\n3. Avoid clickbait, exaggerated claims, and unsupported statistics.\n4. Start the post with a strong opening hook.\n5. Write between 120 and 150 words, excluding the heading and hashtags.\n6. Include exactly one clear call to action.\n7. Use a maximum of 3 relevant hashtags.\n8. Use short, readable paragraphs.\n9. Remove all emojis, decorative symbols, and unnecessary Markdown.\n10. Maintain a natural, professional tone.\n\nReturn the result in this format:\n\nHeading: [Generated heading]\n\nPost:\n[Complete LinkedIn post including hashtags]\n\nDo not include explanations, review scores, or additional commentary.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f08f407b-2d63-4909-8641-9c80f02ba136",
+      "name": "Writer Agent"
+    },
+    {
+      "parameters": {
+        "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query__q_', ``, 'string') }}",
+        "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location__location_', ``, 'string') }}",
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-serpapi.serpApiTool",
+      "typeVersion": 1,
+      "position": [
+        368,
+        256
+      ],
+      "id": "31f8a8cc-b3da-4e47-8fb0-eef3be30b92d",
+      "name": "Google search in SerpApi",
+      "credentials": {
+        "serpApi": {
+          "id": "q8mOvXLCdDgkXNYn",
+          "name": "SerpApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        320
+      ],
+      "id": "924923cb-e1bd-4f3f-81ad-ea691a1a70ed",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "7PcdSOn6NauEeDY2",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# ROLE\n\nYou are a Senior LinkedIn Content Reviewer, Technical Editor, and Content Quality Specialist.\n\nYour responsibility is to review, improve, validate, and finalize LinkedIn posts created by the Writer Agent.\n\nYou specialize in AI, Generative AI, AI Agents, Agentic AI, MCP, RAG, cloud computing, cybersecurity, DevOps, automation, and emerging technologies.\n\nYour goal is to produce accurate, engaging, professional, and natural LinkedIn content ready for human approval.\n\n# INPUT\n\nWriter Agent Output:\n\n{{ $json.output }}\n\n# TASK 1: UNDERSTAND THE CONTENT\n\n1. Read the entire Writer Agent output.\n2. Identify the main topic, heading, technical concepts, and intended message.\n3. Understand the purpose of the post and its target professional audience.\n4. Preserve the original topic and important technical information.\n5. Do not change the intended meaning unnecessarily.\n6. Do not introduce unrelated topics.\n\n# TASK 2: REVIEW AND SCORE INTERNALLY\n\nEvaluate the content using the following criteria:\n\n- Opening hook: Score out of 10.\n- Clarity and readability: Score out of 10.\n- Technical accuracy: Score out of 10.\n- Professionalism: Score out of 10.\n- Engagement: Score out of 10.\n- Call to action (CTA): Score out of 10.\n\nIdentify the weakest areas and improve them.\n\nThese scores are for internal evaluation only.\n\nNever include scores, explanations, or review comments in the final output.\n\n# TASK 3: GENERATE OR IMPROVE THE HEADING\n\n1. Review the heading generated by the Writer Agent.\n2. Improve it when necessary.\n3. Keep the heading between 5 and 10 words.\n4. Make it relevant, professional, and engaging.\n5. Ensure the heading accurately reflects the post.\n6. Avoid clickbait, exaggeration, and unsupported claims.\n7. Do not use emojis, decorative symbols, or unnecessary punctuation.\n8. Return exactly one heading.\n\n# TASK 4: REVIEW AND IMPROVE THE LINKEDIN POST\n\n1. Rewrite weak or unclear sentences.\n2. Correct spelling, grammar, punctuation, and sentence structure.\n3. Improve readability and logical flow.\n4. Start with a compelling, professional opening hook.\n5. Explain the topic clearly using practical and meaningful information.\n6. Preserve important technical details.\n7. Remove repetitive statements and unnecessary filler.\n8. Avoid generic AI-generated expressions.\n9. Use natural, human-like professional language.\n10. Organize the post into short, readable paragraphs.\n11. Include exactly one clear call to action near the end.\n12. Include a maximum of 3 relevant hashtags.\n13. Avoid unsupported statistics, exaggerated benefits, and misleading comparisons.\n14. Do not add personal experiences, achievements, or company claims that were not provided.\n15. Do not invent sources, references, research findings, or quotations.\n\n# TASK 5: VERIFY TECHNICAL ACCURACY\n\nTechnical accuracy is mandatory.\n\n1. Review every technical statement for correctness.\n2. Distinguish between a technology's capabilities and its potential benefits.\n3. Avoid claiming that a technology guarantees security, accuracy, performance, scalability, or efficiency.\n4. Do not present assumptions or possible outcomes as established facts.\n5. Avoid unsupported comparisons with other technologies.\n6. Explain technical concepts in a clear and accurate manner.\n7. If a statement cannot be confidently supported, remove it or rewrite it more cautiously.\n8. Do not invent technical specifications, statistics, or benchmarks.\n9. If external verification is unavailable, avoid presenting uncertain claims as verified facts.\n\nTopic-specific guidance:\n\nFor MCP:\n- Explain that Model Context Protocol standardizes how AI applications connect to external tools and data sources.\n- Do not claim MCP replaces traditional APIs.\n- Do not claim MCP automatically guarantees real-time information, security, or accuracy.\n- Explain that data freshness depends on the connected systems.\n\nFor RAG:\n- Explain that Retrieval-Augmented Generation retrieves relevant external information to support model responses.\n- Do not claim RAG completely eliminates hallucinations.\n- Do not claim retrieved information is automatically correct or current.\n- Explain that answer quality depends on retrieval quality and source reliability.\n\nFor AI Agents:\n- Distinguish between AI-generated recommendations and actual tool execution.\n- Do not claim agents can perform every task autonomously.\n- Avoid unsupported claims about productivity, cost reduction, or reliability.\n\nFor DevOps and Cloud:\n- Avoid claiming automation eliminates incidents or operational risks.\n- Explain benefits as possibilities dependent on implementation and environment.\n\nApply the same accuracy standards to all other topics.\n\n# TASK 6: MANDATORY WORD COUNT VALIDATION\n\nThe final Post section MUST contain between 120 and 150 words.\n\nFollow these rules strictly:\n\n1. Count only the main post body.\n2. Exclude the heading from the word count.\n3. Exclude hashtags from the word count.\n4. Target 130–140 words for consistency.\n5. If fewer than 120 words, expand the post with accurate, relevant, meaningful information.\n6. If more than 150 words, shorten it while preserving essential details.\n7. Never add repetitive filler simply to reach the minimum.\n8. Recount the words after making changes.\n9. Repeat the revision process until the main post body contains 120–150 words.\n10. Do not return the final output until this requirement is satisfied.\n\n# TASK 7: CLEAN THE FINAL CONTENT\n\nBefore returning the result:\n\n1. Remove all emojis, icons, and decorative symbols.\n2. Remove unnecessary Markdown formatting.\n3. Remove decorative asterisks and bullet points.\n4. Remove unnecessary headings or section titles within the post.\n5. Remove repetitive sentences.\n6. Remove exaggerated or promotional language.\n7. Remove unsupported facts or statistics.\n8. Correct grammar and punctuation.\n9. Use short paragraphs with appropriate spacing.\n10. Ensure the content is suitable for professional LinkedIn readers.\n\n# TASK 8: FINAL QUALITY CHECK\n\nInternally verify every requirement:\n\n- Heading contains 5–10 words.\n- Main post contains 120–150 words, excluding heading and hashtags.\n- Opening hook is engaging and professional.\n- Technical statements are accurate and appropriately qualified.\n- Original meaning is preserved.\n- Grammar and readability are strong.\n- Exactly one clear CTA is included.\n- No more than 3 relevant hashtags are included.\n- No emojis or decorative symbols appear.\n- No unsupported statistics or exaggerated claims appear.\n- No unnecessary Markdown formatting appears.\n- No repetitive filler appears.\n\nIf any requirement fails, revise the content and validate again.\n\n# WORKFLOW RESTRICTIONS\n\nYou are responsible only for content review and improvement.\n\n- Do not call Gmail.\n- Do not call Google Sheets.\n- Do not call LinkedIn.\n- Do not request human approval.\n- Do not save or publish content.\n- Do not return approval or execution status messages.\n- Do not claim that content has been approved, saved, or published.\n\nThe downstream n8n Gmail, IF, and Google Sheets nodes handle those operations.\n\n# MANDATORY OUTPUT FORMAT\n\nReturn only the following plain-text structure:\n\nHeading: [Professional heading containing 5–10 words]\n\nPost:\n[Final reviewed LinkedIn post containing 120–150 words, excluding heading and hashtags]\n\n[Maximum 3 relevant hashtags]\n\n# FINAL INSTRUCTIONS\n\nDo not include:\n\n- Review scores\n- Word counts\n- Explanations\n- Editorial comments\n- JSON\n- Markdown code fences\n- Approval messages\n- Tool execution details\n- Any text outside the required Heading and Post structure\n\nReturn only the complete, professionally reviewed LinkedIn heading and post.",
+        "options": {
+          "systemMessage": "\nMANDATORY WORD COUNT TOOL VALIDATION\n\nYou have access to the tool validate_linkedin_word_count.\n\nAfter reviewing and improving the LinkedIn post:\n\n1. Generate the complete draft in this format:\nHeading: [5-10 words]\n\nPost:\n[120-150 words]\n\n[Maximum 3 hashtags]\n\n2. Call validate_linkedin_word_count and pass the\nENTIRE draft, including Heading:, Post:, body,\nand hashtags, as the query argument.\n\n3. Read the tool result.\n\n4. If valid is false:\n- Read the errors and word_count.\n- Rewrite the post to correct the problems.\n- Target 130-140 words excluding heading and hashtags.\n- Call validate_linkedin_word_count again with the\n  complete revised draft.\n\n5. Repeat until valid is true, with a maximum\nof 3 validation calls.\n\n6. If the post is still invalid after 3 calls,\nreturn exactly:\nVALIDATION_FAILED: Unable to produce a compliant\nLinkedIn post.\n\n7. Only when valid is true, return the exact draft\nthat passed validation.\n\n8. Never modify the draft after successful validation.\n\n9. Do not include tool results, word counts, JSON,\nexplanations, or review comments in the final output.\n\nCalling the validation tool is mandatory for every post.\n  "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        0
+      ],
+      "id": "73675837-67ef-4525-b134-1238dc1fa212",
+      "name": "Reviewer Agent"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "arul.elec@gmail.com",
+        "subject": "LinkedIn Post Approval Required",
+        "message": "={{ $('Reviewer Agent').first().json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "disapproveLabel": "Reject"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "resumeUnit": "days"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        0
+      ],
+      "id": "f4f4ef6b-9895-4a98-b302-07e439b749ba",
+      "name": "Send message and wait for response",
+      "webhookId": "4be5ea75-3adb-4221-aef3-e9951ca65a59",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D3jY2Kg6PC7XfClG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a7782aff-d0da-4a15-97ed-a32d775de8b3",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1216,
+        0
+      ],
+      "id": "55d712a2-7294-4426-9670-56100d41f785",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1oUB-nfmKYjsWLtQWVXDGw2cfJoRvRm16kIGa4VZEoqM",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Post Approval",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oUB-nfmKYjsWLtQWVXDGw2cfJoRvRm16kIGa4VZEoqM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oUB-nfmKYjsWLtQWVXDGw2cfJoRvRm16kIGa4VZEoqM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Topic": "={{ $('On form submission').item.json['Topic*'] }}",
+            "Final Post": "={{ $('Reviewer Agent').first().json.output.replace(/^Heading:\\s*/i, '').replace(/\\n\\s*Post:\\s*/i, '\\n\\n').trim() }}",
+            "Status": "Approved"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Post",
+              "displayName": "Final Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        -96
+      ],
+      "id": "f9cc3077-727c-4901-a1c4-e532ff506664",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "bEnwKmpf8gYYjbTg",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Count words in the LinkedIn post body, excluding the heading and hashtags. Return whether the post satisfies the required 120–150 words. Use this tool to validate the final draft and rewrite when validation fails.",
+        "jsCode": "\nconst text = String(query ?? \"\").trim();\n\n// Extract the heading and post.\nconst headingMatch = text.match(/^Heading:[ \\t]*(.+)$/im);\nconst postMatch = text.match(/^Post:[ \\t]*([\\s\\S]*)/im);\n\nconst heading = headingMatch?.[1]?.trim() ?? \"\";\nconst post = postMatch?.[1]?.trim() ?? \"\";\n\n// Remove hashtags from word count.\nconst body = post\n  .replace(/#[\\p{L}\\p{N}_]+/gu, \"\")\n  .trim();\n\n// Count words.\nconst wordCount = body\n  ? body.split(/\\s+/).filter(Boolean).length\n  : 0;\n\nconst headingWordCount = heading\n  ? heading.split(/\\s+/).length\n  : 0;\n\nconst hashtagCount =\n  (post.match(/#[\\p{L}\\p{N}_]+/gu) ?? []).length;\n\n// Validate requirements.\nconst errors = [];\n\nif (!heading) {\n  errors.push(\"Heading is missing\");\n}\n\nif (!post) {\n  errors.push(\"Post is missing\");\n}\n\nif (headingWordCount < 5 || headingWordCount > 10) {\n  errors.push(\"Heading must contain 5-10 words\");\n}\n\nif (wordCount < 120 || wordCount > 150) {\n  errors.push(\n    `Post contains ${wordCount} words. Required: 120-150.`\n  );\n}\n\nif (hashtagCount > 3) {\n  errors.push(\"Maximum 3 hashtags allowed\");\n}\n\n// Return a string, as required by the n8n tool.\nreturn JSON.stringify({\n  valid: errors.length === 0,\n  word_count: wordCount,\n  heading_word_count: headingWordCount,\n  hashtag_count: hashtagCount,\n  errors,\n  instruction: errors.length === 0\n    ? \"VALID: Return this reviewed post.\"\n    : \"INVALID: Rewrite the post and call this tool again.\"\n});\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        208
+      ],
+      "id": "a9e5f2ab-64a4-41f2-9d58-8b861d3400c8",
+      "name": "validate_linkedin_word_count."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google search in SerpApi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Writer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer Agent": {
+      "main": [
+        [
+          {
+            "node": "Reviewer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reviewer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reviewer Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate_linkedin_word_count.": {
+      "ai_tool": [
+        [
+          {
+            "node": "Reviewer Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "f87ab592-0b92-438d-ab8e-940b7d053edb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2b97724d143ab5da1395e773e5285617e06e1b7b4f310d1dd331fdcc03aa4abe"
+  },
+  "nodeGroups": [],
+  "id": "jVNr5f6GxrbGGI1a",
+  "tags": []
+}
