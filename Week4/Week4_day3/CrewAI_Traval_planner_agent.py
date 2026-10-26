@@ -29,6 +29,7 @@ travel_adviser = Task(
     expected_output=(
         "A list of 3 tourist places with descriptions."
     ),
+    
     agent=writer
 )
 
