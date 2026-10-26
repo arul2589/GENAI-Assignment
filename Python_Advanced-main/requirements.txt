@@ -1,0 +1,14 @@
+# Python_Advanced folder dependencies
+# Install with:  pip install -r requirements.txt
+
+# Data validation library (used in 01_Pydantic.ipynb)
+pydantic
+
+# Needed to open and run the .ipynb notebooks in Jupyter
+notebook
+ipykernel
+
+# ----------------------------------------------------------------------
+# Note: 02_Async_Functions.ipynb uses only Python's built-in
+#       'asyncio' and 'time' modules, so it needs nothing extra.
+# ----------------------------------------------------------------------
