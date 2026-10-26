@@ -32,9 +32,6 @@ travel_adviser = Task(
     agent=writer
 )
 
-
-
-
 crew = Crew(agents=[writer], tasks=[travel_adviser])
 
 city = input("Enter the city you want to visit: ")

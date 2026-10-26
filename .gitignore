@@ -1,45 +1,84 @@
-# Python cache and compiled files
-__pycache__/
-*.py[cod]
-*$py.class
 
-# Virtual environments
-.venv/
+# ==========================================
+# GENAI Assignment - Git Ignore
+# ==========================================
+
+# Python Virtual Environments
 venv/
+venv312/
+.venv/
 env/
 ENV/
 
-# Environment variables and secrets
+# Python Cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment Variables and API Keys
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
 
-# Test and coverage output
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
+# Jupyter Notebook
+.ipynb_checkpoints/
 
-# Build and package files
+# VS Code (local settings)
+.vscode/*
+!.vscode/extensions.json
+
+# CrewAI Memory and Storage
+agent_memory/
+.crewai/
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.sqlite3-shm
+*.sqlite3-wal
+
+# LangChain / LangSmith / RAG
+chroma_db/
+chroma/
+faiss_index/
+vectorstore/
+vector_db/
+*.faiss
+*.pkl
+CrewAI_Framework-main
+
+# Logs and Temporary Files
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Build and Packaging
 build/
 dist/
 *.egg-info/
-.eggs/
 
-# Type checker and linter caches
-.mypy_cache/
-.pyre/
-.ruff_cache/
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# IDE and editor settings
-.vscode/
-.idea/
-
-# Operating system files
+# Operating System
 .DS_Store
 Thumbs.db
-Desktop.ini
+
+# Local Data (uncomment if not for GitHub)
+# data/
+# *.pdf
+# *.csv
+
+# Keep project source files
+# Python .py files
+# Jupyter .ipynb files
+# requirements.txt
+# README.md
