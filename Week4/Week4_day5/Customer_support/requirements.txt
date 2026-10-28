@@ -1,0 +1,12 @@
+crewai
+crewai-tools
+streamlit
+python-dotenv
+pypdf
+langchain-core
+langchain-community
+langchain-text-splitters
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+rank-bm25

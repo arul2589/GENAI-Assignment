@@ -1,0 +1,44 @@
+# AutoGen course dependencies
+# Install everything with:  pip install -r requirements.txt
+#
+# Tested with AutoGen 0.7.5 (the modern v0.4+ API) and Python 3.11.
+
+# Core AutoGen: agents and teams (the high-level API we use everywhere)
+autogen-agentchat
+
+# OpenAI connector for AutoGen (gives us OpenAIChatCompletionClient)
+autogen-ext[openai]
+
+# Reads your secret OPENAI_API_KEY from the .env file
+python-dotenv
+
+# Free web search used in notebook 08 (DuckDuckGo - no API key needed)
+ddgs
+
+# MCP support for notebook 19 (connect agents to tool servers).
+# Gives both the MCP client (for the agent) and FastMCP (to build a server).
+autogen-ext[mcp]
+mcp
+
+# To run the notebooks
+notebook
+ipykernel
+
+# ----------------------------------------------------------------------
+# API KEY: create a .env file in this folder with one line:
+#   OPENAI_API_KEY=your-openai-key
+#
+# The whole course uses OpenAI's gpt-4o-mini as the agent's brain.
+# ----------------------------------------------------------------------
+#
+# NOTES FOR SPECIFIC NOTEBOOKS:
+#   08_Web_Search_Integration  -> needs `ddgs` (installed above), no API key.
+#   16_Human_in_the_Loop       -> run it in Jupyter; a text box appears for
+#                                 you to type. It cannot run fully automated.
+#   18_AI_Interviewer_Project  -> same: run in Jupyter and type your answers.
+#   19_Connecting_MCP_with_Agents -> needs `mcp` (installed above). It starts a
+#                                 tiny tool server as a background program.
+#
+# All other notebooks run top to bottom on their own.
+# In a notebook, async agents are called with `await` (e.g. await agent.run(...)).
+# ----------------------------------------------------------------------

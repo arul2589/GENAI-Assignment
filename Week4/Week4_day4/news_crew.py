@@ -47,7 +47,7 @@ writer = Agent(
 
 task1 = Task(
     description=(
-    "Today is {today}. "
+    f"Today is {today}. "
     "Use SerperDevTool to search for today's top 3 technology news stories. "
     "Prioritize important developments in AI, cloud computing, "
     "cybersecurity, and emerging technologies. "
@@ -66,7 +66,7 @@ task1 = Task(
 
 task2 = Task(
     description=(
-        "Today is {today}. "
+        f"Today is {today}. "
         "Using ONLY the Researcher's output, create a tech newsletter. "
         "You MUST format the newsletter as EXACTLY 5 separate lines. "
         "Each line must end with a newline character except the last. "
@@ -97,7 +97,7 @@ task2 = Task(
 
 crew = Crew(agents=[researcher, writer], tasks=[task1, task2],process=Process.sequential,verbose=True)
 
-result = crew.kickoff(inputs={"today": today})
+result = crew.kickoff()
 
 newsletter = result.raw.strip()
 

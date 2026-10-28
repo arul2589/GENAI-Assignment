@@ -1,0 +1,14 @@
+services:
+  customer-support:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      HF_HOME: /app/hf_cache
+      PYTHONUNBUFFERED: "1"
+    ports:
+      - "127.0.0.1:8510:8501"
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+      - ./hf_cache:/app/hf_cache
