@@ -6,6 +6,7 @@
 # Python Virtual Environments
 venv/
 venv312/
+venv_autogen/
 .venv/
 env/
 ENV/
